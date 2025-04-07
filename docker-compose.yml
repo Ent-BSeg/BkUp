@@ -1,0 +1,46 @@
+version: '3'
+services:
+  db:
+    image: postgres:15
+    container_name: backup-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=backup_system
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - backup-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backup-sys
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/systemd/system:/etc/systemd/system
+      - /BkUp:/BkUp
+    environment:
+      - TZ=UTC
+      - DATABASE_URL=postgresql://postgres:postgres_password@db:5432/backup_system
+      - SESSION_SECRET=change-this-to-a-secure-secret-key
+    restart: unless-stopped
+    privileged: true
+    networks:
+      - backup-network
+
+networks:
+  backup-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
