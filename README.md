@@ -87,7 +87,7 @@ mkdir -p ~/backup-system
 cd ~/backup-system
 Download the project files
 
-git clone https://github.com/YOUR_USERNAME/docker-backup-manager.git .
+git clone https://github.com/Ent-BSeg/BkUp.git .
 Part 2: Prepare the Server
 Install Docker and Docker Compose
 
